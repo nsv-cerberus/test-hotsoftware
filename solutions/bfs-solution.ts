@@ -13,20 +13,25 @@ function canReachTarget(a: number, b: number, target: number): string {
   if (!isFiniteNumbers(a, b, target)) return NO;
   if (hasNegativeNumbers(a, b, target)) return NO;
   if (target < a && target < b) return NO;
-  if (a === target || b === target) return YES;
 
   const queue: [number, number][] = [[a, b]];
   const visitedStates = new Set<string>();
   let queueIndex = 0;
+  let isFirstIteration = true;
 
   while (queueIndex < queue.length) {
     const state = queue[queueIndex++];
     if (!state) continue;
     const [curA, curB] = state;
-    const currentMax = curA > curB ? curA : curB;
 
-    // For generated states, the smaller value was already checked in the parent state.
-    if (currentMax === target) return YES;
+    if (isFirstIteration) {
+      if (curA === target || curB === target) return YES;
+      isFirstIteration = false;
+    } else {
+      const currentMax = Math.max(curA, curB);
+      if (currentMax === target) return YES;
+    }
+
     if (curA > target || curB > target) continue;
 
     const key = `${curA},${curB}`;
