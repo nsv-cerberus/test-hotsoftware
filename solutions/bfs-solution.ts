@@ -23,8 +23,10 @@ function canReachTarget(a: number, b: number, target: number): string {
     const state = queue[queueIndex++];
     if (!state) continue;
     const [curA, curB] = state;
+    const currentMax = curA > curB ? curA : curB;
 
-    if (curA === target || curB === target) return YES;
+    // For generated states, the smaller value was already checked in the parent state.
+    if (currentMax === target) return YES;
     if (curA > target || curB > target) continue;
 
     const key = `${curA},${curB}`;
@@ -34,6 +36,7 @@ function canReachTarget(a: number, b: number, target: number): string {
     const sum = curA + curB;
 
     if (sum <= target) {
+      if (sum === target) return YES;
       queue.push([curA, sum]);
       queue.push([sum, curB]);
     }
