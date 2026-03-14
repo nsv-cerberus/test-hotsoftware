@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 const YES = "YES";
 const NO = "NO";
 
@@ -50,7 +52,7 @@ function canReachTarget(a: number, b: number, target: number): string {
   return NO;
 }
 
-function checkNumbers() {
+(function checkNumbers() {
   const numbers = [
     { a: 1, b: 2, target: 3 },
     { a: 2, b: 4, target: 7 },
@@ -67,6 +69,45 @@ function checkNumbers() {
     const result = canReachTarget(a, b, target);
     console.log(`Input #${idx + 1}: a=${a}, b=${b}, target=${target} => ${result}`);
   });
+})();
+
+function startInteractiveMode(): void {
+  const readline = require("readline");
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const ask = (): void => {
+    rl.question("Enter: a b с (or q to quit): ", (input: string) => {
+      const text = input.trim();
+      if (text.toLowerCase() === "q") {
+        rl.close();
+        return;
+      }
+
+      const parts = text.split(/\s+/).map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) {
+        ask();
+        return;
+      }
+
+      const a = parts[0];
+      const b = parts[1];
+      const target = parts[2];
+      
+      if (a === undefined || b === undefined || target === undefined) {
+        ask();
+        return;
+      }
+
+      const result = canReachTarget(a, b, target);
+      console.log(`Result: ${result}`);
+      ask();
+    });
+  };
+
+  ask();
 }
 
-checkNumbers();
+startInteractiveMode();
